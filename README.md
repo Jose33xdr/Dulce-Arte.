@@ -350,5 +350,6 @@ sudo bash -c 'set -a; source /etc/dulce-arte.env; set +a; cd /opt/dulce-arte; .v
 ```
 
 Verifica el servicio con `sudo systemctl status dulce-arte nginx postgresql` y abre `http://100.48.94.162/` y `http://100.48.94.162/admin/`. HTTP no cifra las credenciales ni protege las cookies en tránsito: úsalo solo para la demostración académica acordada.
-#   D u l c e - A r t e .  
+#   D u l c e - A r t e . 
+ 
  
