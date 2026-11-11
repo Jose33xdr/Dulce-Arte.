@@ -8,8 +8,9 @@
         <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">Obrador &amp; Gestión</p>
             <h1 class="mt-1 font-serif text-3xl font-bold text-stone-900">Panel de Control Operativo</h1>
-            <p class="mt-1 text-sm text-stone-600">
-                Bienvenido, <span class="font-semibold text-stone-900">{{ request.user.get_full_name|default:request.user.username }}</span> · {{ request.user.get_role_display }}
+            <p class="mt-1 text-sm text-stone-600 flex items-center gap-2">
+                Bienvenido, <span class="font-semibold text-stone-900">{{ request.user.get_full_name|default:request.user.username }}</span>
+                <span class="badge-status badge-primary text-[10px]">{{ request.user.get_role_display }}</span>
             </p>
         </div>
     </div>
@@ -17,39 +18,47 @@
     <!-- Tarjetas de Indicadores Ejecutivos (KPIs) -->
     <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article class="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">Pedidos activos</h2>
-                <span class="badge-status badge-primary">Comercial</span>
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">Pedidos activos</h2>
+                    <p class="mt-3 font-serif text-4xl font-bold text-[#773344]">{{ metrics.orders.active_total }}</p>
+                </div>
+                <svg class="h-8 w-8 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
             </div>
-            <p class="mt-3 font-serif text-3xl font-bold text-stone-900">{{ metrics.orders.active_total }}</p>
-            <p class="mt-1 text-xs text-stone-500">Cotizaciones y pedidos en curso</p>
+            <p class="mt-2 text-xs text-stone-500">Cotizaciones y pedidos en curso</p>
         </article>
 
         <article class="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">En producción</h2>
-                <span class="badge-status badge-warning">Kanban</span>
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">En producción</h2>
+                    <p class="mt-3 font-serif text-4xl font-bold text-[#773344]">{{ metrics.production.in_preparation_count }}</p>
+                </div>
+                <svg class="h-8 w-8 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
             </div>
-            <p class="mt-3 font-serif text-3xl font-bold text-stone-900">{{ metrics.production.in_preparation_count }}</p>
-            <p class="mt-1 text-xs text-stone-500">Órdenes activas en cocina</p>
+            <p class="mt-2 text-xs text-stone-500">Órdenes activas en cocina</p>
         </article>
 
         <article class="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">Insumos bajo mínimo</h2>
-                <span class="badge-status {% if metrics.inventory.critical_supplies_count > 0 %}badge-warning{% else %}badge-success{% endif %}">Bodega</span>
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">Insumos bajo mínimo</h2>
+                    <p class="mt-3 font-serif text-4xl font-bold text-[#773344]">{{ metrics.inventory.critical_supplies_count }}</p>
+                </div>
+                <svg class="h-8 w-8 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
-            <p class="mt-3 font-serif text-3xl font-bold text-stone-900">{{ metrics.inventory.critical_supplies_count }}</p>
-            <p class="mt-1 text-xs text-stone-500">Alertas de reposición de stock</p>
+            <p class="mt-2 text-xs text-stone-500">Alertas de reposición de stock</p>
         </article>
 
         <article class="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">Despachos de hoy</h2>
-                <span class="badge-status badge-success">Logística</span>
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500">Despachos de hoy</h2>
+                    <p class="mt-3 font-serif text-4xl font-bold text-[#773344]">{{ metrics.dispatch.dispatches_today_count }}</p>
+                </div>
+                <svg class="h-8 w-8 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
             </div>
-            <p class="mt-3 font-serif text-3xl font-bold text-stone-900">{{ metrics.dispatch.dispatches_today_count }}</p>
-            <p class="mt-1 text-xs text-stone-500">Entregas programadas para hoy</p>
+            <p class="mt-2 text-xs text-stone-500">Entregas programadas para hoy</p>
         </article>
     </section>
 
@@ -61,7 +70,7 @@
         </div>
 
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <a href="{% url 'dashboard:clients' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 hover:border-[#773344] hover:shadow-md transition-all">
+            <a href="{% url 'dashboard:clients' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#773344]/50">
                 <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f5eaed] text-[#773344]">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </span>
@@ -71,7 +80,7 @@
                 </div>
             </a>
 
-            <a href="{% url 'dashboard:orders' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 hover:border-[#773344] hover:shadow-md transition-all">
+            <a href="{% url 'dashboard:orders' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#773344]/50">
                 <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f5eaed] text-[#773344]">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 </span>
@@ -81,7 +90,7 @@
                 </div>
             </a>
 
-            <a href="{% url 'dashboard:production' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 hover:border-[#773344] hover:shadow-md transition-all">
+            <a href="{% url 'dashboard:production' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#773344]/50">
                 <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3D6DB] text-[#773344]">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"/></svg>
                 </span>
@@ -91,7 +100,7 @@
                 </div>
             </a>
 
-            <a href="{% url 'dashboard:inventory' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 hover:border-[#773344] hover:shadow-md transition-all">
+            <a href="{% url 'dashboard:inventory' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#773344]/50">
                 <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#DCEBDD] text-[#2d5a33]">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </span>
@@ -101,7 +110,7 @@
                 </div>
             </a>
 
-            <a href="{% url 'dashboard:recipes' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 hover:border-[#773344] hover:shadow-md transition-all">
+            <a href="{% url 'dashboard:recipes' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#773344]/50">
                 <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f5eaed] text-[#773344]">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 </span>
@@ -111,7 +120,7 @@
                 </div>
             </a>
 
-            <a href="{% url 'dashboard:dispatch' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 hover:border-[#773344] hover:shadow-md transition-all">
+            <a href="{% url 'dashboard:dispatch' %}" class="flex items-center gap-3.5 rounded-xl border border-stone-200 bg-white p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#773344]/50">
                 <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#DCEBDD] text-[#2d5a33]">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 </span>
