@@ -82,26 +82,31 @@ class OrderService:
             )
             order.save()
 
+            order_items_to_create = []
             for item_info, product, quantity, unit_price, subtotal in prepared_items:
-                OrderItem.objects.create(
-                    order=order,
-                    product=product,
-                    quantity=quantity,
-                    unit_price=unit_price,
-                    subtotal=subtotal,
-                    cake_size=item_info.get("cake_size", ""),
-                    flavor_sponge=item_info.get("flavor_sponge", ""),
-                    flavor_filling=item_info.get("flavor_filling", ""),
-                    flavor_cover=item_info.get("flavor_cover", ""),
-                    custom_dedication=item_info.get("custom_dedication", ""),
-                    customizations=item_info.get("customizations", ""),
+                order_items_to_create.append(
+                    OrderItem(
+                        order=order,
+                        product=product,
+                        quantity=quantity,
+                        unit_price=unit_price,
+                        subtotal=subtotal,
+                        cake_size=item_info.get("cake_size", ""),
+                        flavor_sponge=item_info.get("flavor_sponge", ""),
+                        flavor_filling=item_info.get("flavor_filling", ""),
+                        flavor_cover=item_info.get("flavor_cover", ""),
+                        custom_dedication=item_info.get("custom_dedication", ""),
+                        customizations=item_info.get("customizations", ""),
+                    )
                 )
+
+            OrderItem.objects.bulk_create(order_items_to_create)
 
             # Historial inicial
             if user:
                 OrderStatusHistory.objects.create(
                     order=order,
-                    previous_status="NUEVO",
+                    previous_status="CREACION",
                     new_status=order.status,
                     changed_by=user,
                     reason="Creación y registro del pedido en el sistema.",

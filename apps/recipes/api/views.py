@@ -17,12 +17,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     Catálogo de productos de pastelería con consulta técnica de BOM.
     """
 
-    queryset = Product.objects.all().order_by("category", "name")
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["code", "name"]
     ordering_fields = ["name", "base_price", "category"]
+
+    def get_queryset(self):
+        return Product.objects.filter(is_active=True).order_by("category", "name")
 
     def perform_destroy(self, instance):
         instance.soft_delete()
@@ -60,10 +62,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
     CRUD de recetas técnicas (BOM).
     """
 
-    queryset = Recipe.objects.all().select_related("product").prefetch_related("ingredients__supply", "ingredients__unit").order_by("name")
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "product__name", "product__code"]
+
+    def get_queryset(self):
+        return (
+            Recipe.objects.filter(is_active=True)
+            .select_related("product")
+            .prefetch_related("ingredients__supply", "ingredients__unit")
+            .order_by("name")
+        )
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:

@@ -13,12 +13,14 @@ class ClientViewSet(viewsets.ModelViewSet):
     CRUD completo de clientes con búsqueda, ordenación y eliminación lógica protegida.
     """
 
-    queryset = Client.objects.all().order_by("name")
     serializer_class = ClientSerializer
     permission_classes = [IsSalesOrAdminOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["identification", "name", "email", "phone"]
     ordering_fields = ["name", "created_at"]
+
+    def get_queryset(self):
+        return Client.objects.filter(is_active=True).order_by("name")
 
     def perform_destroy(self, instance):
         # En lugar de eliminar físicamente, aplicar soft_delete protegida

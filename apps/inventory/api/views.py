@@ -33,11 +33,13 @@ class SupplyViewSet(viewsets.ModelViewSet):
     Gestión de insumos con filtrado, búsqueda y protección de eliminación lógica.
     """
 
-    queryset = Supply.objects.all().select_related("unit_of_measure").order_by("name")
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["sku", "name"]
     ordering_fields = ["name", "current_stock", "created_at"]
+
+    def get_queryset(self):
+        return Supply.objects.filter(is_active=True).select_related("unit_of_measure").order_by("name")
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
