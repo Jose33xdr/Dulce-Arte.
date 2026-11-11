@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar sesión — Dulce Arte{% endblock %}
+
+{% block auth_content %}
+<section class="w-full max-w-md bg-white rounded-2xl border border-stone-200/80 p-8 shadow-md">
+    <div class="flex items-center gap-3 mb-6">
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#773344] text-white font-serif font-bold text-xl shadow-sm">D</span>
+        <div>
+            <h1 class="font-serif text-2xl font-bold text-stone-900">Dulce Arte</h1>
+            <p class="text-xs text-stone-500">Pastelería Artesanal · Iniciar sesión</p>
+        </div>
+    </div>
+
+    {% if form.errors %}
+        <div class="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+            Usuario o contraseña incorrectos.
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}" class="space-y-4">
+        {% csrf_token %}
+        <div>
+            <label for="id_username" class="block mb-1.5 text-sm font-medium text-stone-700">Usuario</label>
+            <input type="text" name="username" id="id_username" required autofocus
+                   class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm text-stone-900 shadow-sm focus:border-[#773344] focus:outline-none focus:ring-2 focus:ring-[#773344]/20">
+        </div>
+        <div>
+            <label for="id_password" class="block mb-1.5 text-sm font-medium text-stone-700">Contraseña</label>
+            <input type="password" name="password" id="id_password" required
+                   class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm text-stone-900 shadow-sm focus:border-[#773344] focus:outline-none focus:ring-2 focus:ring-[#773344]/20">
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-colors">
+            Ingresar al obrador
+        </button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,70 @@
+<aside class="w-60 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col justify-between shrink-0 h-screen sticky top-0 z-10">
+    <div>
+        <div class="px-6 py-5 border-b border-stone-100">
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#773344] text-white font-serif font-bold text-lg shadow-sm">D</span>
+                <div>
+                    <h1 class="font-serif text-xl font-bold tracking-tight text-stone-900">Dulce Arte</h1>
+                    <p class="text-xs text-stone-500">Pastelería artesanal</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="p-3 space-y-1">
+            <a href="{% url 'dashboard:home' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'home' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Resumen</span>
+            </a>
+
+            <a href="{% url 'dashboard:clients' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'clients' or request.resolver_match.url_name == 'client_create' or request.resolver_match.url_name == 'client_update' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Clientes</span>
+            </a>
+
+            <a href="{% url 'dashboard:orders' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_confirm' or request.resolver_match.url_name == 'order_cancel' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                <span>Pedidos</span>
+            </a>
+
+            <a href="{% url 'dashboard:production' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'production' or request.resolver_match.url_name == 'production_transition' or request.resolver_match.url_name == 'quality_check' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                <span>Producción</span>
+            </a>
+
+            <a href="{% url 'dashboard:inventory' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'inventory' or request.resolver_match.url_name == 'supply_create' or request.resolver_match.url_name == 'supply_update' or request.resolver_match.url_name == 'stock_entry' or request.resolver_match.url_name == 'stock_waste' or request.resolver_match.url_name == 'units' or request.resolver_match.url_name == 'unit_create' or request.resolver_match.url_name == 'unit_update' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <span>Inventario</span>
+            </a>
+
+            <a href="{% url 'dashboard:recipes' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'recipes' or request.resolver_match.url_name == 'product_create' or request.resolver_match.url_name == 'product_update' or request.resolver_match.url_name == 'recipe_create' or request.resolver_match.url_name == 'recipe_update' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <span>Recetas</span>
+            </a>
+
+            <a href="{% url 'dashboard:dispatch' %}"
+               class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'dispatch' or request.resolver_match.url_name == 'route_create' or request.resolver_match.url_name == 'route_detail' or request.resolver_match.url_name == 'route_update' or request.resolver_match.url_name == 'route_assign' or request.resolver_match.url_name == 'dispatch_confirm' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span>Despachos</span>
+            </a>
+
+            {% if user.is_admin %}
+                <a href="{% url 'dashboard:administration' %}"
+                   class="flex items-center gap-3 px-3.5 py-2.5 text-sm rounded-r-xl transition-all {% if request.resolver_match.url_name == 'administration' or request.resolver_match.url_name == 'user_create' or request.resolver_match.url_name == 'user_update' or request.resolver_match.url_name == 'user_delete' %}border-l-4 border-[#773344] bg-stone-50 font-semibold text-[#773344]{% else %}border-l-4 border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900{% endif %}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Administración</span>
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <div class="p-4 m-3 rounded-xl bg-[#FAF7F2] border border-stone-200/70">
+        <p class="text-xs font-semibold uppercase tracking-wider text-stone-400">Rol activo</p>
+        <p class="mt-1 text-sm font-semibold text-[#773344]">{{ request.user.get_role_display }}</p>
+    </div>
+</aside>

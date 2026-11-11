@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} — Dulce Arte{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl space-y-6">
+    <header>
+        <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">Recetas y BOM</p>
+        <h2 class="mt-1 font-serif text-3xl font-bold text-stone-900">{{ page_title }}</h2>
+        <p class="mt-1 text-sm text-stone-500">Asocia insumos y unidades compatibles; la merma se incorpora al cálculo de producción.</p>
+    </header>
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">{{ form.non_field_errors }}</div>{% endif %}
+        <section class="grid gap-5 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:grid-cols-2">
+            {% for field in form %}
+            <div class="{% if field.name == 'instructions' %}sm:col-span-2{% endif %}">
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-stone-700">{{ field.label }}</label>
+                {% if field.name == "product" and request.GET.product and not object %}
+                    {{ field.as_widget|safe }}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                {% if field.help_text %}<p class="mt-1 text-xs text-stone-500">{{ field.help_text|safe }}</p>{% endif %}
+                {% for error in field.errors %}<p class="mt-1 text-xs text-rose-700">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+        </section>
+        <section class="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+            <h3 class="font-serif text-lg font-bold text-stone-900">Ingredientes (BOM)</h3>
+            {{ ingredient_formset.management_form }}
+            {% if ingredient_formset.non_form_errors %}<div class="text-sm text-rose-700">{{ ingredient_formset.non_form_errors }}</div>{% endif %}
+            {% for ingredient in ingredient_formset %}
+            <fieldset class="grid gap-4 rounded-xl border border-stone-200 bg-stone-50/40 p-4 sm:grid-cols-2">
+                <legend class="px-2 text-xs font-semibold uppercase tracking-wider text-[#773344]">Ingrediente {{ forloop.counter }}</legend>
+                {% for field in ingredient %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-xs font-medium text-stone-700">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}<p class="mt-1 text-xs text-rose-700">{{ error }}</p>{% endfor %}
+                </div>
+                {% endfor %}
+            </fieldset>
+            {% endfor %}
+        </section>
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <a href="{{ cancel_url }}" class="inline-flex justify-center rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700 hover:bg-stone-50">Cancelar</a>
+            <button type="submit" class="inline-flex justify-center rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735]">Guardar receta</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

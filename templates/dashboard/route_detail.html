@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ route.code }} — Dulce Arte{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl space-y-6">
+    <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">Despachos &amp; Logística</p>
+            <h2 class="mt-1 font-serif text-3xl font-bold text-stone-900">{{ route.code }}</h2>
+            <p class="mt-1 text-sm text-stone-500">{{ route.scheduled_date|date:"d/m/Y" }} · {% if route.assigned_driver %}{{ route.assigned_driver.get_full_name|default:route.assigned_driver.username }}{% else %}<span class="italic text-stone-400">Sin repartidor</span>{% endif %} · <span class="badge-status badge-primary">{{ route.get_status_display }}</span></p>
+            {% if route.notes %}<p class="mt-2 text-sm text-stone-600">{{ route.notes }}</p>{% endif %}
+        </div>
+        {% if route.status == "PROGRAMADA" and user.is_sales %}
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'dashboard:route_update' route.pk %}" class="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 hover:bg-stone-50">Editar ruta</a>
+            <a href="{% url 'dashboard:route_assign' route.pk %}" class="rounded-xl border border-[#773344] bg-white px-4 py-2 text-sm font-semibold text-[#773344] hover:bg-[#f5eaed]">Asignar despachos</a>
+            <form method="post" action="{% url 'dashboard:route_start' route.pk %}">{% csrf_token %}<button class="rounded-xl bg-[#773344] px-4 py-2 text-sm font-semibold text-white hover:bg-[#5d2735]">Iniciar ruta</button></form>
+            <a href="{% url 'dashboard:route_cancel' route.pk %}" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100">Cancelar ruta</a>
+        </div>
+        {% endif %}
+    </header>
+
+    <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-stone-100 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    <tr>
+                        <th class="px-5 py-3.5">Parada</th>
+                        <th class="px-5 py-3.5">Pedido y cliente</th>
+                        <th class="px-5 py-3.5">Dirección</th>
+                        <th class="px-5 py-3.5">Estado</th>
+                        <th class="px-5 py-3.5">Comprobante</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    {% for item in route.dispatches.all %}
+                    <tr class="hover:bg-stone-50/70 transition-colors">
+                        <td class="p-5 font-semibold text-stone-900">#{{ item.stop_order }}</td>
+                        <td class="p-5">
+                            <p class="font-semibold text-stone-900">{{ item.order.order_number }}</p>
+                            <p class="text-xs text-stone-500">{{ item.order.client.name }}</p>
+                        </td>
+                        <td class="p-5 text-stone-600">{{ item.order.delivery_address|default:"Sin dirección" }}</td>
+                        <td class="p-5">
+                            <span class="badge-status {% if item.status == 'ENTREGADO' %}badge-success{% else %}badge-primary{% endif %}">{{ item.get_status_display }}</span>
+                        </td>
+                        <td class="p-5 text-xs">
+                            {% if item.proof %}
+                                <span class="font-semibold text-emerald-700">Recibe {{ item.proof.recipient_name }} · {{ item.proof.registered_at|date:"d/m H:i" }}</span>
+                            {% else %}
+                                <span class="italic text-stone-400">Pendiente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="p-10 text-center italic text-stone-400">La ruta todavía no tiene paradas asignadas.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <a href="{% url 'dashboard:dispatch' %}" class="inline-block text-sm font-semibold text-[#773344] hover:underline">← Volver a despachos</a>
+</div>
+{% endblock %}

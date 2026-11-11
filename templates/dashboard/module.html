@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} — Dulce Arte{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl space-y-6">
+    <!-- Encabezado del Módulo -->
+    <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">Obrador Artesanal</p>
+            <h2 class="mt-1 font-serif text-3xl font-bold text-stone-900">{{ page_title }}</h2>
+        </div>
+        <div class="flex flex-wrap gap-2.5">
+            {% if module == "clients" and user.is_sales %}
+                <a href="{% url 'dashboard:client_create' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nuevo cliente</span>
+                </a>
+            {% elif module == "orders" and user.is_sales %}
+                <a href="{% url 'dashboard:order_create' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nuevo pedido</span>
+                </a>
+            {% elif module == "inventory" and user.is_admin %}
+                <a href="{% url 'dashboard:supply_create' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nuevo insumo</span>
+                </a>
+                <a href="{% url 'dashboard:units' %}" class="inline-flex items-center gap-2 rounded-xl border border-[#773344] bg-white px-4 py-2.5 text-sm font-semibold text-[#773344] shadow-sm hover:bg-[#f5eaed] transition-all">
+                    <span>Unidades de medida</span>
+                </a>
+            {% elif module == "recipes" and user.is_admin %}
+                <a href="{% url 'dashboard:product_create' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nuevo producto</span>
+                </a>
+                <a href="{% url 'dashboard:recipe_create' %}" class="inline-flex items-center gap-2 rounded-xl border border-[#773344] bg-white px-4 py-2.5 text-sm font-semibold text-[#773344] shadow-sm hover:bg-[#f5eaed] transition-all">
+                    <span>Nueva receta (BOM)</span>
+                </a>
+            {% elif module == "dispatch" and user.is_sales %}
+                <a href="{% url 'dashboard:route_create' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nueva ruta</span>
+                </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- 1. MÓDULO DE CLIENTES -->
+    {% if module == "clients" %}
+    <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-stone-100 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    <tr>
+                        <th class="px-5 py-3.5">Cliente</th>
+                        <th class="px-5 py-3.5">RUT / DNI</th>
+                        <th class="px-5 py-3.5">Contacto &amp; Dirección</th>
+                        <th class="px-5 py-3.5">Estado</th>
+                        <th class="px-5 py-3.5 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    {% for item in clients %}
+                    <tr class="hover:bg-stone-50/70 transition-colors">
+                        <td class="p-5">
+                            <p class="font-semibold text-stone-900">{{ item.name }}</p>
+                            {% if item.notes %}<p class="mt-0.5 text-xs text-stone-500">{{ item.notes|truncatechars:50 }}</p>{% endif %}
+                        </td>
+                        <td class="p-5 font-medium text-stone-700">{{ item.identification }}</td>
+                        <td class="p-5">
+                            <p class="font-medium text-stone-800">{{ item.email|default:item.phone|default:"Sin contacto" }}</p>
+                            {% if item.address %}<p class="mt-0.5 text-xs text-stone-500">{{ item.address }}</p>{% endif %}
+                        </td>
+                        <td class="p-5">
+                            {% if item.is_active %}
+                                <span class="badge-status badge-success">Activo</span>
+                            {% else %}
+                                <span class="badge-status badge-neutral">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-5 text-right whitespace-nowrap">
+                            {% if user.is_sales %}
+                                <a href="{% url 'dashboard:client_update' item.pk %}" class="font-semibold text-[#773344] hover:underline">Editar</a>
+                                <form method="post" action="{% if item.is_active %}{% url 'dashboard:client_deactivate' item.pk %}{% else %}{% url 'dashboard:client_restore' item.pk %}{% endif %}" class="inline">
+                                    {% csrf_token %}
+                                    <button class="ml-3 text-xs font-semibold text-stone-500 hover:text-stone-800 hover:underline">{% if item.is_active %}Desactivar{% else %}Reactivar{% endif %}</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="p-12">
+                            <div class="flex flex-col items-center justify-center text-center">
+                                <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f5eaed] text-[#773344]">
+                                    <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                                </span>
+                                <h3 class="mt-4 font-serif text-lg font-bold text-stone-900">Aún no hay clientes registrados</h3>
+                                <p class="mt-1 max-w-sm text-xs text-stone-500">Registra tu primer cliente con su RUT/DNI y dirección para comenzar a emitir cotizaciones y pedidos.</p>
+                                {% if user.is_sales %}
+                                <a href="{% url 'dashboard:client_create' %}" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Crear Cliente</span>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 2. MÓDULO DE PEDIDOS Y COTIZACIONES -->
+    {% elif module == "orders" %}
+    <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-stone-100 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    <tr>
+                        <th class="px-5 py-3.5">Pedido</th>
+                        <th class="px-5 py-3.5">Cliente</th>
+                        <th class="px-5 py-3.5">Fecha de Entrega</th>
+                        <th class="px-5 py-3.5">Total / Saldo</th>
+                        <th class="px-5 py-3.5">Estado</th>
+                        <th class="px-5 py-3.5 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    {% for item in orders %}
+                    <tr class="hover:bg-stone-50/70 transition-colors">
+                        <td class="p-5">
+                            <p class="font-semibold text-stone-900">{{ item.order_number }}</p>
+                            <p class="mt-0.5 text-xs text-stone-500">{{ item.get_delivery_type_display }}</p>
+                        </td>
+                        <td class="p-5">
+                            <p class="font-semibold text-stone-900">{{ item.client.name }}</p>
+                            <p class="mt-0.5 text-xs text-stone-500">{{ item.client.identification }}</p>
+                        </td>
+                        <td class="p-5">
+                            <p class="font-semibold text-stone-800">{{ item.delivery_date|date:"d/m/Y" }}</p>
+                            <p class="mt-0.5 text-xs text-stone-500">{{ item.delivery_time|time:"H:i" }} hrs</p>
+                        </td>
+                        <td class="p-5">
+                            <p class="font-semibold text-stone-900">${{ item.total_amount }}</p>
+                            <p class="mt-0.5 text-xs text-stone-500">Pendiente: ${{ item.balance_due }}</p>
+                        </td>
+                        <td class="p-5">
+                            {% if item.status == "ENTREGADO" or item.status == "LISTO" %}
+                                <span class="badge-status badge-success">{{ item.get_status_display }}</span>
+                            {% elif item.status == "CANCELADO" %}
+                                <span class="badge-status badge-neutral">{{ item.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge-status badge-primary">{{ item.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-5 text-right whitespace-nowrap">
+                            {% if user.is_sales and item.status == "COTIZACION" %}
+                                <a href="{% url 'dashboard:order_confirm' item.pk %}" class="font-semibold text-emerald-700 hover:underline">Confirmar</a>
+                                <a href="{% url 'dashboard:order_update' item.pk %}" class="ml-3 font-semibold text-[#773344] hover:underline">Editar</a>
+                            {% endif %}
+                            {% if user.is_sales and item.status != "ENTREGADO" and item.status != "CANCELADO" %}
+                                <a href="{% url 'dashboard:order_cancel' item.pk %}" class="ml-3 font-semibold text-rose-700 hover:underline">Cancelar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="p-12">
+                            <div class="flex flex-col items-center justify-center text-center">
+                                <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f5eaed] text-[#773344]">
+                                    <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                                </span>
+                                <h3 class="mt-4 font-serif text-lg font-bold text-stone-900">No hay pedidos ni cotizaciones todavía</h3>
+                                <p class="mt-1 max-w-sm text-xs text-stone-500">Crea una cotización personalizada con sabores, relleno, dedicatoria y fecha de entrega.</p>
+                                {% if user.is_sales %}
+                                <a href="{% url 'dashboard:order_create' %}" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Crear Pedido</span>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 3. MÓDULO DE INVENTARIO -->
+    {% elif module == "inventory" %}
+    <div class="grid gap-6 xl:grid-cols-3">
+        <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm xl:col-span-2">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-stone-100 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                        <tr>
+                            <th class="px-5 py-3.5">Insumo</th>
+                            <th class="px-5 py-3.5">Disponible</th>
+                            <th class="px-5 py-3.5">Mínimo</th>
+                            <th class="px-5 py-3.5">Estado Stock</th>
+                            <th class="px-5 py-3.5 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                        {% for item in supplies %}
+                        <tr class="hover:bg-stone-50/70 transition-colors">
+                            <td class="p-5">
+                                <p class="font-semibold text-stone-900">{{ item.name }}</p>
+                                <p class="mt-0.5 text-xs text-stone-500">{{ item.sku }} · {% if item.is_active %}Activo{% else %}Inactivo{% endif %}</p>
+                            </td>
+                            <td class="p-5 font-semibold text-stone-900">{{ item.current_stock|floatformat:"-2" }} <span class="text-xs font-normal text-stone-500">{{ item.unit_of_measure.code }}</span></td>
+                            <td class="p-5 text-stone-500">{{ item.minimum_stock }} {{ item.unit_of_measure.code }}</td>
+                            <td class="p-5">
+                                {% if item.is_low_stock %}
+                                    <span class="badge-status badge-warning">Reponer</span>
+                                {% else %}
+                                    <span class="badge-status badge-success">Óptimo</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-5 text-right whitespace-nowrap">
+                                {% if user.is_admin %}
+                                    <a href="{% url 'dashboard:supply_update' item.pk %}" class="font-semibold text-[#773344] hover:underline">Editar</a>
+                                    {% if item.is_active %}
+                                        <a href="{% url 'dashboard:stock_entry' item.pk %}" class="ml-2.5 font-semibold text-emerald-700 hover:underline">Entrada</a>
+                                        <a href="{% url 'dashboard:stock_waste' item.pk %}" class="ml-2.5 font-semibold text-amber-700 hover:underline">Merma</a>
+                                        <form method="post" action="{% url 'dashboard:supply_deactivate' item.pk %}" class="inline">{% csrf_token %}<button class="ml-2.5 text-xs font-semibold text-stone-500 hover:underline">Desactivar</button></form>
+                                    {% endif %}
+                                {% elif user.is_kitchen and item.is_active %}
+                                    <a href="{% url 'dashboard:stock_waste' item.pk %}" class="font-semibold text-amber-700 hover:underline">Registrar merma</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="p-12">
+                                <div class="flex flex-col items-center justify-center text-center">
+                                    <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#DCEBDD] text-[#2d5a33]">
+                                        <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                    </span>
+                                    <h3 class="mt-4 font-serif text-lg font-bold text-stone-900">Bodega de insumos vacía</h3>
+                                    <p class="mt-1 max-w-sm text-xs text-stone-500">Agrega materias primas (harina, mantequilla, crema, chocolate) para controlar existencias y consumos BOM.</p>
+                                    {% if user.is_admin %}
+                                    <a href="{% url 'dashboard:supply_create' %}" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-all">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                        <span>Crear Insumo</span>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <aside class="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+            <h3 class="font-serif text-lg font-bold text-stone-900">Kardex Reciente</h3>
+            <p class="mt-0.5 text-xs text-stone-500">Últimos movimientos auditados de inventario</p>
+            <div class="mt-4 space-y-3.5">
+                {% for item in movements %}
+                <div class="flex items-center justify-between border-b border-stone-100 pb-3 last:border-0">
+                    <div>
+                        <p class="text-sm font-semibold text-stone-900">{{ item.supply.name }}</p>
+                        <p class="text-xs text-stone-500">{{ item.get_movement_type_display }} · {{ item.created_at|date:"d/m H:i" }}</p>
+                    </div>
+                    <span class="badge-status {% if item.movement_type == 'ENTRADA' %}badge-success{% else %}badge-primary{% endif %}">
+                        {{ item.quantity|floatformat:"-2" }} {{ item.supply.unit_of_measure.code }}
+                    </span>
+                </div>
+                {% empty %}
+                <div class="py-8 text-center">
+                    <p class="text-xs italic text-stone-400">Sin movimientos de stock registrados aún.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
+    </div>
+
+    <!-- 4. MÓDULO DE RECETAS Y BOM (TARJETAS INTERACTIVAS) -->
+    {% elif module == "recipes" %}
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {% for item in products %}
+        <article class="flex flex-col justify-between rounded-2xl border border-stone-200 bg-white p-6 shadow-sm hover:shadow-md transition-all">
+            <div>
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">{{ item.get_category_display }} · {{ item.code }}</p>
+                        <h3 class="mt-1 font-serif text-xl font-bold text-stone-900">{{ item.name }}</h3>
+                    </div>
+                    {% if item.recipe %}
+                        <span class="badge-status badge-success shrink-0">BOM configurado</span>
+                    {% else %}
+                        <span class="badge-status badge-warning shrink-0">Sin receta</span>
+                    {% endif %}
+                </div>
+
+                {% if item.description %}
+                    <p class="mt-2 text-xs text-stone-600">{{ item.description }}</p>
+                {% endif %}
+
+                <div class="mt-4 flex items-center justify-between rounded-xl bg-[#FAF7F2] px-4 py-2.5 border border-stone-200/70">
+                    <div>
+                        <p class="text-[11px] uppercase tracking-wider text-stone-400 font-semibold">Precio Base</p>
+                        <p class="text-base font-bold text-stone-900">${{ item.base_price }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[11px] uppercase tracking-wider text-stone-400 font-semibold">Rendimiento</p>
+                        <p class="text-sm font-semibold text-[#773344]">
+                            {% if item.recipe %}{{ item.recipe.yield_portions }} porciones{% else %}No definido{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if item.recipe %}
+                <!-- Desplegable interactivo con lista de ingredientes y mermas -->
+                <details class="group mt-4 rounded-xl border border-stone-200 bg-stone-50/60 p-3.5 transition-all">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold text-stone-800">
+                        <span>Ver ingredientes y mermas ({{ item.recipe.ingredients.all|length }})</span>
+                        <span class="text-[#773344] transition-transform group-open:rotate-180">▼</span>
+                    </summary>
+                    <div class="mt-3 space-y-2 border-t border-stone-200/80 pt-3">
+                        {% for ing in item.recipe.ingredients.all %}
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-semibold text-stone-800">{{ ing.supply.name }}</span>
+                            <span class="text-stone-600">
+                                <strong>{{ ing.quantity_required }} {{ ing.unit.code }}</strong>
+                                <span class="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-medium text-amber-800">Merma {{ ing.waste_percentage }}%</span>
+                            </span>
+                        </div>
+                        {% empty %}
+                        <p class="text-xs italic text-stone-400">Esta receta aún no tiene ingredientes asociados.</p>
+                        {% endfor %}
+                    </div>
+                </details>
+                {% endif %}
+            </div>
+
+            {% if user.is_admin %}
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-stone-100 pt-4 text-xs font-semibold">
+                <div class="flex gap-3">
+                    <a href="{% url 'dashboard:product_update' item.pk %}" class="text-[#773344] hover:underline">Editar producto</a>
+                    {% if item.recipe %}
+                        <a href="{% url 'dashboard:recipe_update' item.recipe.pk %}" class="text-emerald-700 hover:underline">Editar BOM</a>
+                    {% else %}
+                        <a href="{% url 'dashboard:recipe_create' %}?product={{ item.pk }}" class="text-amber-700 hover:underline">+ Configurar BOM</a>
+                    {% endif %}
+                </div>
+                {% if item.is_active %}
+                <form method="post" action="{% url 'dashboard:product_deactivate' item.pk %}">
+                    {% csrf_token %}
+                    <button class="text-stone-400 hover:text-rose-700 hover:underline">Desactivar</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </article>
+        {% empty %}
+        <div class="col-span-full rounded-2xl border border-stone-200 bg-white p-12 shadow-sm">
+            <div class="flex flex-col items-center justify-center text-center">
+                <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f5eaed] text-[#773344]">
+                    <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                </span>
+                <h3 class="mt-4 font-serif text-lg font-bold text-stone-900">Catálogo de productos y recetas vacío</h3>
+                <p class="mt-1 max-w-md text-xs text-stone-500">Crea el primer producto de pastelería y define su ficha técnica (BOM) con insumos y porcentajes de merma.</p>
+                {% if user.is_admin %}
+                <div class="mt-4 flex flex-wrap justify-center gap-3">
+                    <a href="{% url 'dashboard:product_create' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#773344] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#5d2735]">Crear Producto</a>
+                    <a href="{% url 'dashboard:recipe_create' %}" class="inline-flex items-center gap-2 rounded-xl border border-[#773344] bg-white px-4 py-2.5 text-xs font-semibold text-[#773344] hover:bg-[#f5eaed]">Crear Receta</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 5. MÓDULO DE PRODUCCIÓN KANBAN -->
+    {% elif module == "production" %}
+    <div class="grid gap-4 xl:grid-cols-5">
+        {% for code, label, items in stages %}
+        <section class="flex flex-col min-h-[26rem] rounded-2xl border border-stone-200 bg-stone-100/50 overflow-hidden shadow-sm">
+            <!-- Encabezado con Identidad de Color por Etapa -->
+            <div class="px-4 py-3 border-b border-stone-200/80 flex items-center justify-between
+                {% if code == 'RECIBIDO' %}border-t-4 border-t-sky-500 bg-sky-50/80 text-sky-900
+                {% elif code == 'EN_PREPARACION' %}border-t-4 border-t-amber-500 bg-amber-50/80 text-amber-900
+                {% elif code == 'HORNEADO_DECORADO' %}border-t-4 border-t-[#773344] bg-[#F3D6DB] text-[#773344]
+                {% elif code == 'CONTROL_CALIDAD' %}border-t-4 border-t-indigo-800 bg-indigo-50/90 text-indigo-950
+                {% elif code == 'LISTO' %}border-t-4 border-t-emerald-600 bg-[#DCEBDD] text-[#2d5a33]
+                {% endif %}">
+                <h3 class="text-xs font-bold uppercase tracking-wider">{{ label }}</h3>
+                <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-white/80 px-1.5 text-[11px] font-bold shadow-sm">
+                    {{ items|length }}
+                </span>
+            </div>
+
+            <!-- Carril de Tarjetas -->
+            <div class="flex-1 p-3 space-y-3">
+                {% for item in items %}
+                <article class="rounded-xl border border-stone-200/90 bg-white p-4 shadow-md hover:shadow-lg transition-all space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-serif text-sm font-bold text-[#773344]">{{ item.production_code }}</span>
+                        {% if item.stock_consumed %}
+                            <span class="badge-status badge-success text-[10px]">Insumos descontados</span>
+                        {% else %}
+                            <span class="badge-status badge-warning text-[10px]">Stock pendiente</span>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-stone-900">{{ item.order.client.name }}</p>
+                        <p class="text-xs text-stone-500">Pedido {{ item.order.order_number }} · Entrega {{ item.order.delivery_date|date:"d/m" }} {{ item.order.delivery_time|time:"H:i" }}</p>
+                    </div>
+
+                    <div class="rounded-lg bg-stone-50 px-2.5 py-1.5 border border-stone-100">
+                        <p class="text-[11px] text-stone-500">Pastelero asignado:</p>
+                        <p class="text-xs font-semibold text-stone-800">
+                            {% if item.assigned_cook %}
+                                {{ item.assigned_cook.get_full_name|default:item.assigned_cook.username }}
+                            {% else %}
+                                <span class="font-normal italic text-stone-400">Sin asignar</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    {% if user.is_admin %}
+                    <form method="post" action="{% url 'dashboard:assign_cook' item.pk %}" class="flex gap-1.5 pt-1">
+                        {% csrf_token %}
+                        <select name="cook_id" required class="min-w-0 flex-1 rounded-lg border border-stone-300 bg-white px-2 py-1 text-xs text-stone-800">
+                            <option value="">Asignar pastelero...</option>
+                            {% for cook in cooks %}
+                                <option value="{{ cook.pk }}" {% if item.assigned_cook_id == cook.pk %}selected{% endif %}>{{ cook.get_full_name|default:cook.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="rounded-lg bg-[#773344] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#5d2735]">OK</button>
+                    </form>
+                    {% endif %}
+
+                    {% if user.is_kitchen or user.is_admin %}
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-t border-stone-100 pt-2.5 text-xs font-semibold">
+                            {% if item.kanban_stage != "LISTO" %}
+                                <a href="{% url 'dashboard:production_transition' item.pk %}" class="text-[#773344] hover:underline">Avanzar etapa →</a>
+                            {% endif %}
+                            {% if item.kanban_stage == "CONTROL_CALIDAD" %}
+                                <a href="{% url 'dashboard:quality_check' item.pk %}" class="text-emerald-700 hover:underline">Control calidad</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+                {% empty %}
+                <div class="flex flex-col items-center justify-center py-12 px-3 text-center">
+                    <svg class="h-8 w-8 text-stone-300 mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    <p class="text-center italic text-xs text-stone-400">Ningún pedido aquí</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+    </div>
+
+    <!-- 6. MÓDULO DE DESPACHOS Y RUTAS -->
+    {% elif module == "dispatch" %}
+    <div class="grid gap-6 lg:grid-cols-2">
+        <section class="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+            <h3 class="font-serif text-xl font-bold text-stone-900">Hojas de Ruta Programadas</h3>
+            <p class="mt-0.5 text-xs text-stone-500">Secuencia de reparto y asignación de conductores</p>
+            <div class="mt-4 space-y-3">
+                {% for item in routes %}
+                <article class="rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <a href="{% url 'dashboard:route_detail' item.pk %}" class="font-semibold text-stone-900 hover:text-[#773344] hover:underline">{{ item.code }}</a>
+                            <p class="mt-1 text-xs text-stone-500">{{ item.scheduled_date|date:"d/m/Y" }} · Repartidor: <strong class="text-stone-700">{% if item.assigned_driver %}{{ item.assigned_driver.get_full_name|default:item.assigned_driver.username }}{% else %}<span class="font-normal italic text-stone-400">Sin asignar</span>{% endif %}</strong></p>
+                        </div>
+                        <span class="badge-status {% if item.status == 'COMPLETADA' %}badge-success{% else %}badge-primary{% endif %}">{{ item.get_status_display }}</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between border-t border-stone-100 pt-2.5 text-xs text-stone-500">
+                        <span>{{ item.dispatches.count }} parada(s) asignadas</span>
+                        <a href="{% url 'dashboard:route_detail' item.pk %}" class="font-semibold text-[#773344] hover:underline">Gestionar paradas →</a>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="flex flex-col items-center justify-center py-10 text-center">
+                    <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f5eaed] text-[#773344]">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    </span>
+                    <p class="mt-3 text-sm font-semibold text-stone-900">Aún no hay rutas creadas</p>
+                    <p class="mt-1 text-xs text-stone-500">Crea una hoja de ruta para agrupar y ordenar despachos a domicilio.</p>
+                    {% if user.is_sales %}
+                    <a href="{% url 'dashboard:route_create' %}" class="mt-4 inline-flex items-center rounded-xl bg-[#773344] px-4 py-2 text-xs font-semibold text-white hover:bg-[#5d2735]">Crear Ruta</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+            <h3 class="font-serif text-xl font-bold text-stone-900">Despachos y Entregas</h3>
+            <p class="mt-0.5 text-xs text-stone-500">Certificación de recepción con firma digital</p>
+            <div class="mt-4 space-y-3">
+                {% for item in dispatches %}
+                <article class="rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="font-semibold text-stone-900">{{ item.order.order_number }} · {{ item.order.client.name }}</p>
+                            <p class="mt-1 text-xs text-stone-500">{{ item.route.code|default:"Sin ruta asignada" }} · Parada #{{ item.stop_order }}</p>
+                        </div>
+                        <span class="badge-status {% if item.status == 'ENTREGADO' %}badge-success{% else %}badge-primary{% endif %}">{{ item.get_status_display }}</span>
+                    </div>
+                    {% if user.is_delivery or user.is_admin %}
+                        {% if item.status == "EN_RUTA" or item.status == "PENDIENTE" %}
+                            <a href="{% url 'dashboard:dispatch_confirm' item.pk %}" class="mt-3 inline-block text-xs font-semibold text-[#773344] hover:underline">Certificar entrega con firma →</a>
+                        {% endif %}
+                    {% endif %}
+                    {% if item.proof %}
+                        <p class="mt-2 text-xs font-medium text-emerald-700">✓ Recibido por {{ item.proof.recipient_name }}</p>
+                    {% endif %}
+                </article>
+                {% empty %}
+                <div class="flex flex-col items-center justify-center py-10 text-center">
+                    <p class="text-xs italic text-stone-400">No hay despachos pendientes registrados.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

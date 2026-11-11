@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Unidades de Medida — Dulce Arte{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl space-y-6">
+    <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">Inventario &amp; Conversión</p>
+            <h2 class="mt-1 font-serif text-3xl font-bold text-stone-900">Unidades de Medida</h2>
+            <p class="mt-1 text-sm text-stone-500">Unidades y factores de conversión utilizados para insumos y recetas (BOM).</p>
+        </div>
+        <div class="flex flex-wrap gap-2.5">
+            <a href="{% url 'dashboard:inventory' %}" class="rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700 hover:bg-stone-50">Volver a inventario</a>
+            <a href="{% url 'dashboard:unit_create' %}" class="rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735]">Nueva unidad</a>
+        </div>
+    </header>
+
+    <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-stone-100 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    <tr>
+                        <th class="px-5 py-3.5">Código</th>
+                        <th class="px-5 py-3.5">Nombre</th>
+                        <th class="px-5 py-3.5">Magnitud</th>
+                        <th class="px-5 py-3.5">Factor de conversión</th>
+                        <th class="px-5 py-3.5">Estado</th>
+                        <th class="px-5 py-3.5 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    {% for unit in units %}
+                    <tr class="hover:bg-stone-50/70 transition-colors">
+                        <td class="p-5 font-semibold text-stone-900">{{ unit.code }}</td>
+                        <td class="p-5 font-medium text-stone-800">{{ unit.name }}</td>
+                        <td class="p-5"><span class="badge-status badge-primary">{{ unit.get_magnitude_display }}</span></td>
+                        <td class="p-5 text-stone-600">{{ unit.conversion_factor }}</td>
+                        <td class="p-5">
+                            {% if unit.is_active %}
+                                <span class="badge-status badge-success">Activa</span>
+                            {% else %}
+                                <span class="badge-status badge-neutral">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-5 text-right">
+                            <a href="{% url 'dashboard:unit_update' unit.pk %}" class="font-semibold text-[#773344] hover:underline">Editar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="p-10 text-center text-stone-500">No hay unidades de medida registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}
