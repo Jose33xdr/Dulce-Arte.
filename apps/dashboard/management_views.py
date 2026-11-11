@@ -673,7 +673,7 @@ class DeliveryRouteDetailView(SalesManagementMixin, DetailView):
 
 class DeliveryRouteAssignView(SalesManagementMixin, FormView):
     form_class = AssignDispatchForm
-    template_name = "dashboard/management_form.html"
+    template_name = "dashboard/assign_dispatch.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.route = get_object_or_404(DeliveryRoute, pk=kwargs["pk"], status=RouteStatus.PROGRAMADA)
@@ -689,10 +689,13 @@ class DeliveryRouteAssignView(SalesManagementMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        form = context.get("form") or self.get_form()
         context.update({
             "page_title": f"Asignar despachos a {self.route.code}",
+            "route": self.route,
             "module": "dispatch",
             "cancel_url": self.get_success_url(),
+            "pending_dispatches": form.fields["dispatches"].queryset,
         })
         return context
 

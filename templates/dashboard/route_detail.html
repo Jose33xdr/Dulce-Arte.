@@ -3,20 +3,26 @@
 {% block title %}{{ route.code }} — Dulce Arte{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-5xl space-y-6">
-    <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+<div class="mx-auto max-w-5xl space-y-8">
+    <header class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200/80 pb-6">
+        <div class="space-y-1.5">
             <p class="text-xs font-semibold uppercase tracking-wider text-[#773344]">Despachos &amp; Logística</p>
-            <h2 class="mt-1 font-serif text-3xl font-bold text-stone-900">{{ route.code }}</h2>
-            <p class="mt-1 text-sm text-stone-500">{{ route.scheduled_date|date:"d/m/Y" }} · {% if route.assigned_driver %}{{ route.assigned_driver.get_full_name|default:route.assigned_driver.username }}{% else %}<span class="italic text-stone-400">Sin repartidor</span>{% endif %} · <span class="badge-status badge-primary">{{ route.get_status_display }}</span></p>
-            {% if route.notes %}<p class="mt-2 text-sm text-stone-600">{{ route.notes }}</p>{% endif %}
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900">{{ route.code }}</h2>
+            <div class="flex flex-wrap items-center gap-2 pt-1 text-sm text-stone-500">
+                <span>{{ route.scheduled_date|date:"d/m/Y" }}</span>
+                <span>&middot;</span>
+                <span>Repartidor: <strong class="text-stone-700">{% if route.assigned_driver %}{{ route.assigned_driver.get_full_name|default:route.assigned_driver.username }}{% else %}<span class="italic text-stone-400">Sin repartidor</span>{% endif %}</strong></span>
+                <span>&middot;</span>
+                <span class="badge-status {% if route.status == 'COMPLETADA' %}badge-success{% elif route.status == 'EN_CURSO' %}badge-primary{% elif route.status == 'CANCELADA' %}badge-warning{% else %}badge-neutral{% endif %}">{{ route.get_status_display }}</span>
+            </div>
+            {% if route.notes %}<p class="mt-2 text-sm text-stone-600 bg-stone-50 rounded-xl p-3 border border-stone-200/60 max-w-2xl">{{ route.notes }}</p>{% endif %}
         </div>
         {% if route.status == "PROGRAMADA" and user.is_sales %}
-        <div class="flex flex-wrap gap-2">
-            <a href="{% url 'dashboard:route_update' route.pk %}" class="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 hover:bg-stone-50">Editar ruta</a>
-            <a href="{% url 'dashboard:route_assign' route.pk %}" class="rounded-xl border border-[#773344] bg-white px-4 py-2 text-sm font-semibold text-[#773344] hover:bg-[#f5eaed]">Asignar despachos</a>
-            <form method="post" action="{% url 'dashboard:route_start' route.pk %}">{% csrf_token %}<button class="rounded-xl bg-[#773344] px-4 py-2 text-sm font-semibold text-white hover:bg-[#5d2735]">Iniciar ruta</button></form>
-            <a href="{% url 'dashboard:route_cancel' route.pk %}" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100">Cancelar ruta</a>
+        <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+            <a href="{% url 'dashboard:route_update' route.pk %}" class="inline-flex items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700 shadow-sm hover:bg-stone-50 transition-colors">Editar ruta</a>
+            <a href="{% url 'dashboard:route_assign' route.pk %}" class="inline-flex items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700 shadow-sm hover:bg-stone-50 transition-colors">Asignar despachos</a>
+            <form method="post" action="{% url 'dashboard:route_start' route.pk %}" class="inline">{% csrf_token %}<button class="inline-flex items-center justify-center rounded-xl bg-[#773344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#5d2735] transition-colors">Iniciar ruta</button></form>
+            <a href="{% url 'dashboard:route_cancel' route.pk %}" class="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-white px-4 py-2.5 text-sm font-semibold text-rose-700 shadow-sm hover:bg-rose-50 transition-colors">Cancelar ruta</a>
         </div>
         {% endif %}
     </header>
@@ -24,42 +30,60 @@
     <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-                <thead class="bg-stone-100 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                <thead class="bg-stone-50 text-xs font-semibold uppercase tracking-wider text-stone-500 border-b border-stone-200">
                     <tr>
-                        <th class="px-5 py-3.5">Parada</th>
-                        <th class="px-5 py-3.5">Pedido y cliente</th>
-                        <th class="px-5 py-3.5">Dirección</th>
-                        <th class="px-5 py-3.5">Estado</th>
-                        <th class="px-5 py-3.5">Comprobante</th>
+                        <th class="px-5 py-4">Parada</th>
+                        <th class="px-5 py-4">Pedido y cliente</th>
+                        <th class="px-5 py-4">Dirección</th>
+                        <th class="px-5 py-4">Estado</th>
+                        <th class="px-5 py-4">Comprobante</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-100">
                     {% for item in route.dispatches.all %}
                     <tr class="hover:bg-stone-50/70 transition-colors">
-                        <td class="p-5 font-semibold text-stone-900">#{{ item.stop_order }}</td>
+                        <td class="p-5 font-semibold text-stone-900">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-stone-100 text-xs font-bold text-stone-800">#{{ item.stop_order }}</span>
+                        </td>
                         <td class="p-5">
-                            <p class="font-semibold text-stone-900">{{ item.order.order_number }}</p>
-                            <p class="text-xs text-stone-500">{{ item.order.client.name }}</p>
+                            <p class="font-semibold text-stone-900 text-sm">{{ item.order.order_number }}</p>
+                            <p class="text-xs text-stone-500 mt-0.5">{{ item.order.client.name }}</p>
                         </td>
                         <td class="p-5 text-stone-600">{{ item.order.delivery_address|default:"Sin dirección" }}</td>
                         <td class="p-5">
-                            <span class="badge-status {% if item.status == 'ENTREGADO' %}badge-success{% else %}badge-primary{% endif %}">{{ item.get_status_display }}</span>
+                            <span class="badge-status {% if item.status == 'ENTREGADO' %}badge-success{% elif item.status == 'EN_RUTA' %}badge-primary{% else %}badge-neutral{% endif %}">{{ item.get_status_display }}</span>
                         </td>
                         <td class="p-5 text-xs">
                             {% if item.proof %}
-                                <span class="font-semibold text-emerald-700">Recibe {{ item.proof.recipient_name }} · {{ item.proof.registered_at|date:"d/m H:i" }}</span>
+                                <span class="inline-flex items-center gap-1 font-semibold text-emerald-700">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Recibe {{ item.proof.recipient_name }} &middot; {{ item.proof.registered_at|date:"d/m H:i" }}</span>
+                                </span>
                             {% else %}
-                                <span class="italic text-stone-400">Pendiente</span>
+                                <span class="badge-status badge-neutral text-[11px]">Sin comprobante</span>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="5" class="p-10 text-center italic text-stone-400">La ruta todavía no tiene paradas asignadas.</td></tr>
+                    <tr>
+                        <td colspan="5" class="p-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="h-8 w-8 text-stone-300 mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                <p class="text-sm font-medium text-stone-700">La ruta todavía no tiene paradas asignadas</p>
+                                <p class="text-xs text-stone-400 mt-1">Usa el botón "Asignar despachos" para agregar pedidos a domicilio.</p>
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </section>
-    <a href="{% url 'dashboard:dispatch' %}" class="inline-block text-sm font-semibold text-[#773344] hover:underline">← Volver a despachos</a>
+    <div>
+        <a href="{% url 'dashboard:dispatch' %}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#773344] hover:text-[#5d2735] hover:underline transition-colors">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Volver a despachos</span>
+        </a>
+    </div>
 </div>
 {% endblock %}
