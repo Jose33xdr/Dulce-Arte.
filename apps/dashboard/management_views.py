@@ -331,9 +331,9 @@ class OrderConfirmView(SalesManagementMixin, FormView):
 class SupplyCreateView(AdminManagementMixin, CreateView):
     model = Supply
     form_class = SupplyForm
-    template_name = "dashboard/management_form.html"
+    template_name = "dashboard/supply_form.html"
     success_url = reverse_lazy("dashboard:inventory")
-    extra_context = {"page_title": "Nuevo insumo", "module": "inventory"}
+    extra_context = {"page_title": "Nuevo insumo", "module": "inventory", "cancel_url": reverse_lazy("dashboard:inventory")}
 
     def form_valid(self, form):
         messages.success(self.request, "El insumo se registró con stock inicial cero. Registra una entrada para cargar existencias.")
@@ -343,9 +343,9 @@ class SupplyCreateView(AdminManagementMixin, CreateView):
 class SupplyUpdateView(AdminManagementMixin, UpdateView):
     model = Supply
     form_class = SupplyForm
-    template_name = "dashboard/management_form.html"
+    template_name = "dashboard/supply_form.html"
     success_url = reverse_lazy("dashboard:inventory")
-    extra_context = {"page_title": "Editar insumo", "module": "inventory"}
+    extra_context = {"page_title": "Editar insumo", "module": "inventory", "cancel_url": reverse_lazy("dashboard:inventory")}
 
     def form_valid(self, form):
         messages.success(self.request, "Los datos del insumo se actualizaron.")
